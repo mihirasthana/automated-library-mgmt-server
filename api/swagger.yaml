@@ -1,0 +1,260 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a simple API definition for the Autoamated Library Management\
+    \ System"
+  version: "1.0.0"
+  title: "Automated Library Management System"
+basePath: "/api/v1"
+tags:
+- name: "books"
+  description: "books related operations"
+- name: "user"
+  description: "user related operations"
+schemes:
+- "http"
+paths:
+  /login:
+    post:
+      tags:
+      - "user"
+      summary: "Logs in and returns the authentication  cookie"
+      operationId: "loginPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "loginRequest"
+        description: "A JSON object containing the login and password."
+        required: true
+        schema:
+          $ref: "#/definitions/LoginRequest"
+      responses:
+        200:
+          description: "Successfully authenticated. The session ID is returned in\
+            \ a cookie named `X-SESSION`. You need to include this cookie in subsequent\
+            \ requests.\n"
+          headers:
+            Set-Cookie:
+              type: "string"
+              description: "Set the session token in the cookie"
+              default: "X-SESSION=sessionotkenhere"
+        400:
+          description: "Bad Request\n"
+      x-swagger-router-controller: "User"
+  /books/{bookId}:
+    get:
+      tags:
+      - "books"
+      summary: "Lookup book by id"
+      description: "Returns a book's details."
+      operationId: "booksBookIdGET"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "The ID of the book for which details that needs to be fetched."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "returns a book dataset"
+          schema:
+            $ref: "#/definitions/Book"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Session invalid.\n"
+        404:
+          description: "Book not found"
+      x-swagger-router-controller: "Books"
+  /books:
+    get:
+      tags:
+      - "books"
+      summary: "Lookup book by bookTitle"
+      description: "Returns the matching books"
+      operationId: "booksGET"
+      parameters:
+      - name: "bookTitle"
+        in: "query"
+        description: "The title of the book that needs to be fetched."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "returns a object with list of books"
+          schema:
+            $ref: "#/definitions/BookResults"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Session invalid.\n"
+        404:
+          description: "Books by this title not found"
+      security:
+      - SessionKeyAuth: []
+      x-swagger-router-controller: "Books"
+  
+  /books/{bookId}/checkout:
+    post:
+      tags:
+      - "books"
+      summary: "checkouts a book for the user"
+      description: "Checks-out a book for the user by supplying the bookId"
+      operationId: "booksBookIdCheckoutPOST"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "ID of the book that needs to be checked-out"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successfully checkouts the particular book for the user"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Session invalid.\n"
+        404:
+          description: "Book by this ID not found"
+        405:
+          description: "Invalid input"
+      security:
+      - SessionKeyAuth: []
+      x-swagger-router-controller: "Books"
+
+  /books/{bookId}/reserve:
+    post:
+      tags:
+      - "books"
+      summary: "reserves a book for the user"
+      description: "Reserves a book for the user by supplying the bookId"
+      operationId: "booksBookIdReservePOST"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "ID of the book that needs to be reserves"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successfully reserves the particular book for the user"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Session invalid.\n"
+        404:
+          description: "Book by this ID not found"
+        405:
+          description: "Invalid input"
+      security:
+      - SessionKeyAuth: []
+      x-swagger-router-controller: "Books"
+
+  /books/{bookId}/checkin:
+    post:
+      tags:
+      - "books"
+      summary: "check-ins a book for the user"
+      description: ""
+      operationId: "booksBookIdCheckinPOST"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "ID of the book that needs to be checked-in"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successfully check-ins the particular book for the user"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Session invalid.\n"
+        404:
+          description: "Book by this ID not found"
+        405:
+          description: "Invalid input"
+      security:
+      - SessionKeyAuth: []
+      x-swagger-router-controller: "Books"
+
+  /books/{bookId}/pickup-reserved:
+    post:
+      tags:
+      - "books"
+      summary: "checks-out a reserved book for the user"
+      description: ""
+      operationId: "booksBookIdPickUpReservedBookPOST"
+      parameters:
+      - name: "bookId"
+        in: "path"
+        description: "ID of the book that needs to be picked-up after reserving"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successfully checksout the particular book for the user"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Session invalid.\n"
+        404:
+          description: "Book by this ID not found"
+        405:
+          description: "Invalid input"
+      security:
+      - SessionKeyAuth: []
+      x-swagger-router-controller: "Books"
+
+securityDefinitions:
+  SessionKeyAuth:
+    type: "apiKey"
+    name: "X-SESSION"
+    in: "header"
+definitions:
+  Book:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      ISBN:
+        type: "string"
+      total_copies:
+        type: "integer"
+      available_copies:
+        type: "integer"
+      image_url:
+        type: "string"
+      author:
+        type: "string"
+      publisher:
+        type: "string"
+      category:
+        type: "string"
+  LoginRequest:
+    required:
+    - "password"
+    - "username"
+    properties:
+      username:
+        type: "string"
+        minLength: 1
+      password:
+        type: "string"
+        minLength: 1
+  BookIDS:
+    type: "object"
+    properties:
+      book_ids:
+        type: "array"
+        items:
+          type: "string"
+  BookResults:
+    type: "object"
+    properties:
+      book_results:
+        type: "array"
+        items:
+          type: "object"
+          properties: {}

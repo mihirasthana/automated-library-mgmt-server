@@ -1,0 +1,30 @@
+{
+  "name": "automated-library-management-system",
+  "version": "1.0.0",
+  "description": "This is a simple API definition for the Autoamated Library Management System",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "dependencies": {
+    "basic": "^2.0.2",
+    "connect": "^3.2.0",
+    "cookie-auth": "^2.4.2",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "ejs": "^2.5.7",
+    "faker": "^4.1.0",
+    "js-yaml": "^3.3.0",
+    "lodash": "^4.17.4",
+    "node-uuid": "^1.4.8",
+    "pg": "^7.4.0",
+    "pg-promise": "^7.3.1",
+    "swagger-tools": "0.10.1"
+  }
+}
